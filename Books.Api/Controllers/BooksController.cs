@@ -46,12 +46,15 @@ namespace Books.Api.Controllers
         }
 
         [HttpPost]
+        [BookResultFilter]
         public async Task<IActionResult> CreateBook([FromBody] BookForCreation book)
         {
             var bookEntity = _mapper.Map<Entities.Book>(book);
             _booksRepository.AddBook(bookEntity);
 
             await _booksRepository.SaveChangesAsync();
+
+            await _booksRepository.GetBookAsync(bookEntity.Id);
 
             return CreatedAtRoute("GetBook", new { id = bookEntity.Id }, bookEntity);
         }
